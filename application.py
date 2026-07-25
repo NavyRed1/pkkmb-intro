@@ -2,6 +2,7 @@ import streamlit as st
 import base64
 from io import BytesIO
 from PIL import Image
+import textwrap
 
 st.set_page_config(
     page_title="Portfolio Website",
@@ -48,13 +49,13 @@ if uploaded_photo is not None:
 else:
     try:
         # Opens default image saved in your repository folder
-        pil_img = Image.open("profile.jpg")
+        pil_img = Image.open("profile.jpg")  # Change file name if using .png
         img_b64 = image_to_base64(pil_img)
         photo_src = f"data:image/png;base64,{img_b64}"
     except Exception:
         photo_src = ""  # Falls back to placeholder icon if file isn't found
 
-custom_css = """
+custom_css = textwrap.dedent("""
 <style>
     /* Reset default Streamlit layout padding and margins */
     #MainMenu {visibility: hidden;}
@@ -98,7 +99,7 @@ custom_css = """
         padding: 4rem 6rem;
     }
 
-    /* Spline Background Wrapper with Masking to Hide Watermarks */
+    /* Spline Background Wrapper */
     .spline-bg-container {
         position: fixed;
         top: 0;
@@ -109,21 +110,9 @@ custom_css = """
         overflow: hidden;
     }
 
-    /* Thank You Page Background Wrapper */
-    .spline-bg-thankyou {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        overflow: hidden;
-    }
-
-    /* Hide Spline Logo Watermark at bottom right */
     .spline-iframe {
         width: 100%;
-        height: calc(100% + 60px);
+        height: 100%;
         border: none;
         pointer-events: auto;
     }
@@ -158,7 +147,7 @@ custom_css = """
         text-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
 
-    /* Left Aesthetic Sidebar Bar (Matching Image Reference) */
+    /* Left Aesthetic Sidebar Bar */
     .aesthetic-sidebar {
         position: fixed;
         left: 0;
@@ -254,7 +243,7 @@ custom_css = """
         box-shadow: 0 15px 30px rgba(58, 123, 213, 0.5);
     }
 
-    /* Photo Upload Placeholder Card (Right Box) */
+    /* Photo Upload Box */
     .photo-card {
         width: 100%;
         aspect-ratio: 4/5;
@@ -348,79 +337,42 @@ custom_css = """
         font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.9);
     }
-
-    /* Thank You Page Styling */
-    .thankyou-content {
-        position: relative;
-        z-index: 10;
-        text-align: center;
-        background: rgba(10, 10, 20, 0.45);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        padding: 4rem 5rem;
-        border-radius: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-        max-width: 700px;
-    }
-
-    .thankyou-title {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 4rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .thankyou-sub {
-        font-size: 1.2rem;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 2rem;
-    }
 </style>
-"""
+""").strip()
 
 st.markdown(custom_css, unsafe_allow_html=True)
 
-st.markdown("""
-<!-- Floating Navigation Links -->
+nav_and_bg_html = textwrap.dedent("""
 <div class="nav-bar">
     <a href="#hero" class="nav-link">HOME</a>
     <a href="#about" class="nav-link">ABOUT</a>
     <a href="#thankyou" class="nav-link">CONTACT</a>
 </div>
 
-<!-- Left Vertical Accent Sidebar -->
 <div class="aesthetic-sidebar">
     <div class="brand-logo">PORTFOLIO</div>
     <div class="vertical-accent-line"></div>
     <div style="font-size: 0.8rem; opacity: 0.6;">2026</div>
 </div>
-""", unsafe_allow_html=True)
 
-# Base 3D Animated Background for Front Page
-st.markdown("""
 <div class="spline-bg-container">
     <iframe src="https://my.spline.design/animatedlightdesktop-dEHPT5RsJPdOAeEgIR3FbIiN/" 
             class="spline-iframe" frameborder="0"></iframe>
 </div>
-""", unsafe_allow_html=True)
+""").strip()
 
-# Hero Section HTML
-photo_html = f'<img src="{photo_src}" class="photo-img" alt="Profile Photo">' if photo_src else """
-<div class="photo-placeholder-text">
-    <span class="photo-placeholder-icon">📸</span>
-    <p><strong>Your Photo Here</strong></p>
-    <p style="font-size: 0.85rem; opacity: 0.7;">Upload a photo from the sidebar panel on the left</p>
-</div>
-"""
+st.markdown(nav_and_bg_html, unsafe_allow_html=True)
 
-st.markdown(f"""
+if photo_src:
+    photo_inner_html = f'<img src="{photo_src}" class="photo-img" alt="Profile Photo">'
+    photo_border_style = "none"
+else:
+    photo_inner_html = '<div class="photo-placeholder-text"><span class="photo-placeholder-icon">📸</span><p><strong>Your Photo Here</strong></p><p style="font-size: 0.85rem; opacity: 0.7;">Upload a photo from the sidebar panel on the left</p></div>'
+    photo_border_style = "dashed"
+
+hero_html = textwrap.dedent(f"""
 <section id="hero" class="section-container">
     <div class="hero-grid">
-        <!-- Left Hero Content -->
         <div>
             <div style="text-transform: uppercase; letter-spacing: 3px; font-weight: 600; color: #ff9966; margin-bottom: 1rem;">
                 Welcome to my world
@@ -429,18 +381,18 @@ st.markdown(f"""
             <p class="hero-subtitle">{user_tagline}</p>
             <a href="#about" class="cta-button">EXPLORE MORE &rarr;</a>
         </div>
-        
-        <!-- Right Photo Box Container -->
         <div>
-            <div class="photo-card" style="border-style: {'none' if photo_src else 'dashed'};">
-                {photo_html}
+            <div class="photo-card" style="border-style: {photo_border_style};">
+                {photo_inner_html}
             </div>
         </div>
     </div>
 </section>
-""", unsafe_allow_html=True)
+""").strip()
 
-st.markdown(f"""
+st.markdown(hero_html, unsafe_allow_html=True)
+
+about_html = textwrap.dedent(f"""
 <section id="about" class="section-container">
     <div class="about-container glass-card">
         <h2 class="about-header">About Me</h2>
@@ -468,21 +420,14 @@ st.markdown(f"""
         </div>
     </div>
 </section>
-""", unsafe_allow_html=True)
+""").strip()
 
-st.markdown("""
-<section id="thankyou" class="section-container" style="position: relative;">
-    <!-- Spline Animated Drone Background -->
-    <div class="spline-bg-thankyou">
-        <iframe src="https://my.spline.design/drone-7OFa70Z6eWoG2HkoWXwWhTpl/" 
-                class="spline-iframe" frameborder="0"></iframe>
-    </div>
-    
-    <!-- Clean Overlay Content Container (No Spline Watermarks) -->
-    <div class="thankyou-content">
-        <h1 class="thankyou-title">THANK YOU!</h1>
-        <p class="thankyou-sub">Thanks for stopping by my interactive portfolio. Feel free to connect!</p>
-        <a href="#hero" class="cta-button" style="background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);">BACK TO TOP ↑</a>
-    </div>
+st.markdown(about_html, unsafe_allow_html=True)
+
+thankyou_html = textwrap.dedent("""
+<section id="thankyou" style="width: 100vw; height: 100vh; margin: 0; padding: 0; overflow: hidden; position: relative;">
+    <iframe src="https://my.spline.design/drone-7OFa70Z6eWoG2HkoWXwWhTpl/" frameborder="0" width="100%" height="100%" style="width: 100%; height: 100%; border: none;"></iframe>
 </section>
-""", unsafe_allow_html=True)
+""").strip()
+
+st.markdown(thankyou_html, unsafe_allow_html=True)
