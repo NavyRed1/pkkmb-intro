@@ -46,7 +46,13 @@ if uploaded_photo is not None:
     except Exception:
         photo_src = ""
 else:
-    photo_src = ""
+    try:
+        # Opens default image saved in your repository folder
+        pil_img = Image.open("profile.jpg")
+        img_b64 = image_to_base64(pil_img)
+        photo_src = f"data:image/png;base64,{img_b64}"
+    except Exception:
+        photo_src = ""  # Falls back to placeholder icon if file isn't found
 
 custom_css = """
 <style>
