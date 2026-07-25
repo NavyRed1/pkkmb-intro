@@ -1,201 +1,272 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# 1. Force Page Setup & Dark Theme Baseline
+# 1. Force Page Config
 st.set_page_config(
-    page_title="Hurian Yahya Tebe — PKKMB ITS 2026",
+    page_title="HURIAN YAHYA TEBE — ITS 2026",
     page_icon="⛵",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# 2. Custom CSS for Apple/Samsung Style Layout & Glassmorphism Theme
+# 2. Custom CSS for Full-Bleed 3D Background & High-Impact Typography (Nike Aesthetic)
 st.markdown("""
     <style>
-    /* Hide Streamlit default headers & clean margins */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    .block-container {
-        padding-top: 1rem;
-        padding-bottom: 3rem;
-        max-width: 1200px;
+    /* Google Fonts Import */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800;900&display=swap');
+
+    /* Reset Streamlit default container padding and backgrounds */
+    html, body, [data-testid="stAppViewContainer"] {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #080A0F !important;
+        color: #FFFFFF;
+        overflow-x: hidden;
     }
     
-    /* Dark Theme Global Variables */
-    .stApp {
-        background-color: #0B0F19;
+    .block-container {
+        padding: 0rem !important;
+        max-width: 100% !important;
     }
 
-    /* Headings */
+    /* Hide Streamlit Chrome UI */
+    #MainMenu, footer, header { visibility: hidden; }
+
+    /* Fixed Full-Screen Background for Spline Canvas */
+    .spline-bg-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        pointer-events: auto;
+    }
+
+    /* Content Overlay Container */
+    .main-scroll-content {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        pointer-events: none; /* Allows mouse interactions to pass through to Spline 3D behind */
+    }
+
+    .interactive-element {
+        pointer-events: auto; /* Re-enables clicking on text/buttons */
+    }
+
+    /* Section 1: Hero Typography (Nike-style Heavy Headings) */
+    .hero-section {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 4rem 6%;
+        box-sizing: border-box;
+    }
+
+    .hero-tag {
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: #67F3CE;
+        margin-bottom: 0.75rem;
+    }
+
     .hero-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        line-height: 1.2;
+        font-size: clamp(3.5rem, 8vw, 7rem);
+        font-weight: 900;
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+        text-transform: uppercase;
+        color: #FFFFFF;
+        margin: 0 0 1rem 0;
+        text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
+    .hero-subtitle {
+        font-size: clamp(1.1rem, 2vw, 1.5rem);
+        font-weight: 400;
+        color: #A1A1AA;
+        max-width: 600px;
+        margin-bottom: 2rem;
+        line-height: 1.4;
+    }
+
+    /* Scroll Prompt Indicator */
+    .scroll-indicator {
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #71717A;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Section 2 & 3: Editorial Content Layout */
+    .editorial-section {
+        min-height: 80vh;
+        padding: 6rem 6%;
+        background: linear-gradient(180deg, rgba(8,10,15,0) 0%, rgba(8,10,15,0.85) 30%, rgba(8,10,15,0.95) 100%);
+        backdrop-filter: blur(8px);
+    }
+
+    .section-num {
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        color: #4899EA;
+        text-transform: uppercase;
         margin-bottom: 0.5rem;
     }
-    
-    .gradient-text {
-        background: linear-gradient(135deg, #67F3CE 0%, #4899EA 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+
+    .section-heading {
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 3rem;
+        text-transform: uppercase;
     }
 
-    .section-title {
-        font-size: 2.2rem;
+    .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem;
+    }
+
+    .content-block {
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        padding-top: 1.5rem;
+    }
+
+    .content-block h4 {
+        font-size: 1.25rem;
         font-weight: 700;
         color: #FFFFFF;
-        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .content-block p, .content-block ul {
+        font-size: 0.95rem;
+        color: #A1A1AA;
+        line-height: 1.7;
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+    }
+
+    .content-block li {
         margin-bottom: 0.5rem;
     }
 
-    .section-subtitle {
-        font-size: 1.1rem;
-        color: #94A3B8;
-        margin-bottom: 2rem;
-    }
-
-    /* Glassmorphism Cards */
-    .glass-card {
-        background: rgba(15, 23, 42, 0.75);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        padding: 1.75rem;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        color: #E2E8F0;
-        margin-bottom: 1.5rem;
-    }
-
-    .badge {
-        display: inline-block;
-        padding: 0.35rem 0.85rem;
-        border-radius: 9999px;
-        background: rgba(103, 243, 206, 0.1);
-        border: 1px solid rgba(103, 243, 206, 0.3);
-        color: #67F3CE;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
+    /* Sleek Footer */
+    .site-footer {
+        padding: 3rem 6%;
+        background: #080A0F;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 0.8rem;
+        color: #52525B;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# SECTION 1: HERO TITLE CARD (Apple Style)
-# =========================================================
-st.markdown('<div class="badge">✨ PKKMB ITS 2026</div>', unsafe_allow_html=True)
+# ---------------------------------------------------------
+# 1. FIXED FULL-SCREEN SPLINE 3D BACKGROUND
+# ---------------------------------------------------------
+spline_fullscreen_html = """
+<div class="spline-bg-container">
+    <iframe src='https://my.spline.design/animatedpaperboat-dT4G6ed1AwwVip0rKa99F5OV/' 
+            frameborder='0' 
+            width='100%' 
+            height='100%'>
+    </iframe>
+</div>
+"""
+components.html(spline_fullscreen_html, height=0)  # Rendered out-of-flow via CSS fixed positioning
 
-hero_col1, hero_col2 = st.columns([1.2, 1], gap="large")
-
-with hero_col1:
-    st.markdown("""
-        <div style="padding-top: 2rem;">
-            <h1 class="hero-title">
-                Halo, Saya <br><span class="gradient-text">Hurian Yahya Tebe</span>
-            </h1>
-            <p style="font-size: 1.25rem; color: #64748B; font-weight: 500; margin-bottom: 1.5rem;">
-                (dipanggil Nano / Navy)
-            </p>
-            <div class="glass-card">
-                <p style="font-size: 1.05rem; line-height: 1.7; color: #CBD5E1; margin: 0;">
-                    📍 <b>Status:</b> Mahasiswa Baru — ITS 2026<br>
-                    ⛵ <b>Semangat:</b> Siap berlayar, beradaptasi, dan berkarya di kampus perjuangan.
-                </p>
-            </div>
-            <p style="color: #94A3B8; font-size: 0.95rem;">
-                👇 <i>Scroll ke bawah untuk mengenal saya lebih dekat</i>
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
-
-with hero_col2:
-    # Embedded 3D Spline Canvas
-    spline_html = """
-    <div style="width: 100%; height: 480px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-        <iframe src='https://my.spline.design/animatedpaperboat-dT4G6ed1AwwVip0rKa99F5OV/' 
-                frameborder='0' 
-                width='100%' 
-                height='100%'>
-        </iframe>
-    </div>
-    """
-    components.html(spline_html, height=500)
-
-st.markdown("<br><hr style='border-color: rgba(255,255,255,0.08);'><br>", unsafe_allow_html=True)
-
-# =========================================================
-# SECTION 2: ACADEMIC & SKILLS (Scroll Down)
-# =========================================================
-st.markdown('<div class="section-title">📚 Background & Skills</div>', unsafe_allow_html=True)
-st.markdown('<div class="section-subtitle">Pengalaman, Minat Utama, dan Keahlian Digital</div>', unsafe_allow_html=True)
-
-sec2_col1, sec2_col2 = st.columns(2, gap="medium")
-
-with sec2_col1:
-    st.markdown("""
-        <div class="glass-card">
-            <h3 style="color: #67F3CE; margin-top:0;">🛠️ Keahlian & Minat</h3>
-            <ul style="color: #CBD5E1; line-height: 1.8; padding-left: 1.2rem;">
-                <li><b>Teknologi:</b> Web Development, Python Programming, Digital Media</li>
-                <li><b>Design & 3D:</b> Interactive UI/UX, Spline 3D Integration</li>
-                <li><b>Soft Skills:</b> Problem Solving, Adaptabilitas, Teamwork</li>
-            </ul>
-        </div>
-    """, unsafe_allow_html=True)
-
-with sec2_col2:
-    st.markdown("""
-        <div class="glass-card">
-            <h3 style="color: #4899EA; margin-top:0;">🏆 Pengalaman & Proyek</h3>
-            <ul style="color: #CBD5E1; line-height: 1.8; padding-left: 1.2rem;">
-                <li><b>Proyek Web PKKMB:</b> Mengembangkan website perkenalan interaktif berbasis Streamlit & Spline 3D.</li>
-                <li><b>Aktivitas Organisasi:</b> Aktif berkolaborasi dalam kegiatan tim dan komunitas.</li>
-            </ul>
-        </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<br><hr style='border-color: rgba(255,255,255,0.08);'><br>", unsafe_allow_html=True)
-
-# =========================================================
-# SECTION 3: PKKMB GOALS & TARGETS (Scroll Down)
-# =========================================================
-st.markdown('<div class="section-title">🚀 PKKMB & Future Goals</div>', unsafe_allow_html=True)
-st.markdown('<div class="section-subtitle">Target & Harapan Selama Perkuliahan di ITS</div>', unsafe_allow_html=True)
-
-sec3_col1, sec3_col2 = st.columns(2, gap="medium")
-
-with sec3_col1:
-    st.markdown("""
-        <div class="glass-card" style="border-left: 4px solid #67F3CE;">
-            <h3 style="color: #FFFFFF; margin-top:0;">🎯 Target PKKMB</h3>
-            <ol style="color: #CBD5E1; line-height: 1.8; padding-left: 1.2rem;">
-                <li>Mengenal budaya akademik dan nilai-nilai kampus ITS.</li>
-                <li>Membangun jaringan relasi positif dengan sesama mahasiswa baru.</li>
-                <li>Memahami fasilitas serta peluang pengembangan diri di perguruan tinggi.</li>
-            </ol>
-        </div>
-    """, unsafe_allow_html=True)
-
-with sec3_col2:
-    st.markdown("""
-        <div class="glass-card" style="border-left: 4px solid #4899EA;">
-            <h3 style="color: #FFFFFF; margin-top:0;">📌 Target 4 Tahun Ke Depan</h3>
-            <ol style="color: #CBD5E1; line-height: 1.8; padding-left: 1.2rem;">
-                <li><b>Akademik:</b> Mempertahankan prestasi tinggi dan lulus tepat waktu.</li>
-                <li><b>Organisasi:</b> Aktif dalam UKM / Himpunan Mahasiswa.</li>
-                <li><b>Inovasi:</b> Mengikuti kompetisi teknologi & program magang nasional.</li>
-            </ol>
-        </div>
-    """, unsafe_allow_html=True)
-
-# Footer
+# ---------------------------------------------------------
+# 2. OVERLAY SCROLLING CONTENT
+# ---------------------------------------------------------
 st.markdown("""
-    <br><br>
-    <div style="text-align: center; color: #475569; font-size: 0.85rem;">
-        Created with Streamlit & Spline 3D • Hurian Yahya Tebe (PKKMB ITS 2026)
-    </div>
+<div class="main-scroll-content">
+    
+    <!-- HERO SECTION (FULL SCREEN 100VH) -->
+    <section class="hero-section">
+        <div class="interactive-element">
+            <div class="hero-tag">PKKMB ITS 2026</div>
+            <h1 class="hero-title">
+                HURIAN YAHYA<br>TEBE
+            </h1>
+            <p class="hero-subtitle">
+                Known as Nano / Navy. Mahasiswa Baru Perguruan Tinggi ITS 2026. Ready to navigate, adapt, and build the future.
+            </p>
+            <div class="scroll-indicator">
+                <span>SCROLL TO EXPLORE</span> &downarrow;
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 02: BACKGROUND & SKILLS -->
+    <section class="editorial-section">
+        <div class="interactive-element">
+            <div class="section-num">01 / BACKGROUND</div>
+            <h2 class="section-heading">SKILLS & EXPERIENCE</h2>
+            
+            <div class="grid-2">
+                <div class="content-block">
+                    <h4>CORE TECHNICAL SKILLS</h4>
+                    <ul>
+                        <li><b>Web Development:</b> Modern Frontend & Interactive UI Systems</li>
+                        <li><b>Programming:</b> Python, Data Science & Algorithm Fundamentals</li>
+                        <li><b>3D & Web Graphics:</b> Spline 3D Integration & Spatial Design</li>
+                    </ul>
+                </div>
+                
+                <div class="content-block">
+                    <h4>EXPERIENCE & HIGHLIGHTS</h4>
+                    <ul>
+                        <li><b>Digital Projects:</b> Built interactive web experiences and prototypes.</li>
+                        <li><b>Leadership:</b> Active collaborator in student organizations and tech communities.</li>
+                        <li><b>Soft Skills:</b> Critical thinking, adaptive problem solving, and public speaking.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 03: GOALS & PKKMB -->
+    <section class="editorial-section" style="background: rgba(8,10,15,0.98);">
+        <div class="interactive-element">
+            <div class="section-num">02 / VISION</div>
+            <h2 class="section-heading">PKKMB & FUTURE GOALS</h2>
+            
+            <div class="grid-2">
+                <div class="content-block">
+                    <h4>PKKMB TARGETS</h4>
+                    <p>
+                        Comprehensive immersion into ITS campus culture, establishing meaningful networks with fellow freshmen, and understanding academic frameworks to excel from Day 1.
+                    </p>
+                </div>
+                
+                <div class="content-block">
+                    <h4>4-YEAR ACADEMIC ROADMAP</h4>
+                    <p>
+                        Maintain top-tier academic performance, actively contribute to student organizations (UKM/Himpunan), and participate in national technology competitions and industry internships.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer interactive-element">
+        <div>HURIAN YAHYA TEBE &mdash; ITS 2026</div>
+        <div>STORYTELLING THROUGH CODE & 3D</div>
+    </footer>
+
+</div>
 """, unsafe_allow_html=True)
